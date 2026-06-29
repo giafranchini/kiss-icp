@@ -24,7 +24,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess
+from launch.actions import ExecuteProcess, DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.substitutions import (
     LaunchConfiguration,
@@ -35,10 +35,6 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 PACKAGE_NAME = "kiss_icp"
-
-default_config_file = os.path.join(
-    get_package_share_directory(PACKAGE_NAME), "config", "config.yaml"
-)
 
 
 def generate_launch_description():
@@ -60,7 +56,8 @@ def generate_launch_description():
     position_covariance = LaunchConfiguration("position_covariance", default=0.1)
     orientation_covariance = LaunchConfiguration("orientation_covariance", default=0.1)
 
-    config_file = LaunchConfiguration("config_file", default=default_config_file)
+    config_file = PathJoinSubstitution(
+        [FindPackageShare(PACKAGE_NAME), 'config', LaunchConfiguration("config_filename")]),
 
     # KISS-ICP node
     kiss_icp_node = Node(
@@ -106,6 +103,9 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
+            DeclareLaunchArgument(
+                "config_filename", 
+                default_value="config.yaml"),
             kiss_icp_node,
             rviz_node,
             bagfile_play,

@@ -1,0 +1,37 @@
+# NOTE: Please note that this is just an example of the advanced configuration for the KISS-ICP
+# pipeline and it's not really meant to use for any particular dataset, is just to expose other
+# options that are disabled by default
+
+kiss_icp_node:
+  ros__parameters:
+    #### ROS node parameters ####
+    ####    /!\ If you set these ROS-related parameters in the file, they will overwrite the corresponding launch arguments   ####
+
+    use_sim_time: True
+    topic: "spaceuma/velodyne_points"
+    base_frame: "base_link"
+    lidar_odom_frame: "map"
+    publish_odom_tf: True
+    invert_odom_tf: False
+    position_covariance: 0.1
+    orientation_covariance: 0.1
+
+    ####    Core KISS-ICP parameters    ####
+
+    data:
+      deskew: True
+      max_range: 20.0
+      min_range: 1.5
+
+    mapping:
+      voxel_size: 0.1 # <- optional, default = max_range / 100.0
+      max_points_per_voxel: 10
+
+    adaptive_threshold:
+      initial_threshold: 2.0
+      min_motion_th: 0.5
+
+    registration:
+      max_num_iterations: 500 # <- optional
+      convergence_criterion: 0.0001 # <- optional
+      max_num_threads: 0 # <- optional, 0 means automatic
